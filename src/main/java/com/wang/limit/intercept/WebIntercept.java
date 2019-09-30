@@ -30,12 +30,15 @@ public class WebIntercept extends WebMvcConfigurerAdapter {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new CustomInterceptor())
+        /**
+         * addPathPatterns添加符合规则的路径进入CheckControllerLimitInterceptor方法
+         * excludePathPatterns排除符合规则的路径进入CheckControllerLimitInterceptor方法
+         */
+        registry.addInterceptor(new CheckControllerLimitInterceptor())
                 .addPathPatterns("/**");
     }
 
-
-    private class CustomInterceptor extends HandlerInterceptorAdapter {
+    private class CheckControllerLimitInterceptor extends HandlerInterceptorAdapter {
         @Override
         public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
                                  Object handler) throws Exception {
@@ -49,7 +52,7 @@ public class WebIntercept extends WebMvcConfigurerAdapter {
 
                 ControllerLimit annotation = method.getMethodAnnotation(ControllerLimit.class);
                 if (annotation == null) {
-                    //skip
+                    //是否存在ControllerLimit注解
                     return true;
                 }
 
@@ -63,7 +66,6 @@ public class WebIntercept extends WebMvcConfigurerAdapter {
                     response.sendError(annotation.errorCode(), annotation.errorMessage());
                     return false;
                 }
-
             }
 
             return true;
