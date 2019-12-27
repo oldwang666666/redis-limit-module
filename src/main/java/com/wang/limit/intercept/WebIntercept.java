@@ -58,11 +58,8 @@ public class WebIntercept extends WebMvcConfigurerAdapter {
 
                 boolean limit = redisCurrentLimit.currentLimitHandle(annotation.limit());
                 if (limit) {
-                    /*提示语意义不大，不作对比浪费资源
-                    logger.warn(StringUtils.isEmpty(annotation.errorMessage())
-                            ? Message.get("message.intercept.request.limited")
-                            : annotation.errorMessage());*/
                     logger.warn(annotation.errorMessage());
+                    response.setCharacterEncoding("utf-8");
                     response.sendError(annotation.errorCode(), annotation.errorMessage());
                     return false;
                 }
