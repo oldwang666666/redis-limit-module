@@ -55,8 +55,12 @@ public class WebIntercept extends WebMvcConfigurerAdapter {
                     //是否存在ControllerLimit注解
                     return true;
                 }
+                //实际使用去除日志打印
+                logger.info(Message.get("message.redisCurentLimit.methodName")
+                        + method.getBeanType().getName() + method.getMethod().getName());
 
-                boolean limit = redisCurrentLimit.currentLimitHandle(annotation.limit());
+                boolean limit = redisCurrentLimit.currentLimitHandle(annotation.limit(),
+                        method.getBeanType().getName() + method.getMethod().getName());
                 if (limit) {
                     logger.warn(annotation.errorMessage());
                     response.setCharacterEncoding("utf-8");

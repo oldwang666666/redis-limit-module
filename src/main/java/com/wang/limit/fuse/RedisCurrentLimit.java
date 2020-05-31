@@ -60,23 +60,25 @@ public class RedisCurrentLimit {
     /**
      * 限流方法
      * true 限流， false 不限流
+     * @param methodName 方法名
      * @return
      */
-    public boolean currentLimitHandle() {
-        return currentLimitHandle(limitNum);
+    public boolean currentLimitHandle(String methodName) {
+        return currentLimitHandle(limitNum, methodName);
     }
 
     /**
      * 限流方法 - 带限制次数
      * true 限流， false 不限流
      * @param limitNum 每秒限制次数
+     * @param methodName 方法名
      * @return
      */
-    public boolean currentLimitHandle(Integer limitNum) {
+    public boolean currentLimitHandle(Integer limitNum, String methodName) {
         //计算失败默认通过
         Long result = -1L;
-        //以秒为时间单位,此处的key实际使用需要用方法名 + 时间 用于做方法的唯一识别，本处是做个人实验，所以直接使用时间为key
-        String key = String.valueOf(System.currentTimeMillis() / 1000);
+        //以秒为时间单位,此处的key实际使用需要用方法名 + 时间 用于做方法的唯一识别
+        String key = methodName + String.valueOf(System.currentTimeMillis() / 1000);
         if (!isCluster){
             //已测试，可用
             result = this.standAloneCurrentLimitHandle(key, limitNum);
